@@ -1,0 +1,91 @@
+
+//CONSUMER
+
+
+import boto3
+
+def lambda_handler(event,context):
+    client = boto3.client('kinesis'	)
+    size = 100
+    line1 = []
+    kinesis = boto3.client("kinesis")
+    shard_id = "shardId-000000000008"
+    pre_shard_it = kinesis.get_shard_iterator(StreamName="TestDataStream", ShardId=shard_id, ShardIteratorType="AT_SEQUENCE_NUMBER", StartingSequenceNumber = "49602001583752840774976591900547409181743918372884578434")
+    shard_it = pre_shard_it["ShardIterator"]
+    record = ['a']
+    while len(record)!=0:
+        out = kinesis.get_records(ShardIterator=shard_it, Limit=1)
+        shard_it = out["NextShardIterator"]
+        record = out["Records"]
+        print(out)
+        num = 0
+        if len(record) > 0:
+            num = ((record[0]["Data"]).decode("utf-8"))
+            print(num)
+            # y_vec[-1] = num
+            # line1 = live_plotter(x_vec,y_vec,line1)
+            # y_vec = np.append(y_vec[1:],0.0)
+
+
+
+//PRODUCER
+
+import boto3
+import json
+import random
+
+import base64
+
+def lambda_handler(event,context):
+    kinesis = boto3.client('kinesis')
+    count = -1
+    a = []
+    for i in range(100):
+        # URL = "https://csrng.net/csrng/csrng.php?min=0&max=100"
+        # r = requests.get(url = URL)
+        # data = r.json()
+        
+        data = {"status":"success","min":0,"max":100,"random":i}
+        data = str(data["random"])
+        base64.b64encode(bytes(data, 'utf-8'))
+        a.append({'Data':data, 'PartitionKey':"part2"})
+        print(a)
+        res = kinesis.put_records(StreamName="TestDataStream", Records=a)
+        print(res)
+        a = []
+
+//GETDATA
+
+import json
+import os
+import boto3
+import urllib3
+def lambda_handler(event, context):
+    print(event)
+    endpoint = 'https://aohpw08318.execute-api.eu-west-2.amazonaws.com/TEST/'
+    connectionid = event["requestContext"]["connectionId"]
+    apiclient = boto3.client('apigatewaymanagementapi', endpoint_url=endpoint)
+    size = 100
+    line1 = []
+    kinesis = boto3.client("kinesis")
+    shard_id = "shardId-000000000009"
+    pre_shard_it = kinesis.get_shard_iterator(StreamName="TestDataStream", ShardId=shard_id, ShardIteratorType="AT_SEQUENCE_NUMBER", StartingSequenceNumber = "49601993763885033184220890567865481891740620190954553490")
+    shard_it = pre_shard_it["ShardIterator"]
+    record = ['a']
+    while len(record)!=0:
+        out = kinesis.get_records(ShardIterator=shard_it, Limit=1)
+        shard_it = out["NextShardIterator"]
+        record = out["Records"]
+        print(out)
+        num = 0
+        if len(record) > 0:
+            num = int((record[0]["Data"]).decode("utf-8"))
+            print(num)
+            send_data(num, connectionid, apiclient)
+    
+def send_data(msg, connectionid, client):
+    msg = bytes(str(msg), 'utf-8')
+    response = client.post_to_connection(
+        Data=msg,
+        ConnectionId=connectionid
+    )
