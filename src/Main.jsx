@@ -8,9 +8,9 @@ class Main extends React.Component {
     state = {
         calls: [],
         ws: null
-
     }
 
+    lastCustomer = true;
     timeout = 2500;
     connect = () => {
         var ws = new WebSocket("wss://juhbg8r319.execute-api.us-west-2.amazonaws.com/TEST");
@@ -31,7 +31,7 @@ class Main extends React.Component {
 
         ws.onmessage = evt => {
             var data = JSON.parse(evt.data)
-            console.log(data['type'])
+            console.log(data)
             if(data["type"] === "callconnected")
             {
                 console.log(data['data'])
@@ -40,8 +40,10 @@ class Main extends React.Component {
                     calls = [
                         ...calls,
                          {
+                            contactId: data['contactId'],
                             phoneNumber:  data['data'],
                             realtimetransciption: [],
+                            agent: [],
                             voicemail : false,
                             transciption : false,
                             comprehend : false,
@@ -59,28 +61,66 @@ class Main extends React.Component {
             {
                 console.log(data['data'])
                 this.setState(prevState => {
-                    const callIndex = prevState.calls.findIndex(call => call.phoneNumber === data["phoneNumber"])
-                    let calls = [...prevState.calls]
-                    const call = {...calls[callIndex]}
-                    let realtimetransciption = [...call['realtimetransciption']]
-                    if(data["isPartial"] === "true")
-                    {
-                        realtimetransciption.splice(realtimetransciption.length - 1, 1, data['data'])
-                    }
-                    else
-                    {
-                        realtimetransciption.splice(realtimetransciption.length - 1, 1, data['data'])
-                        realtimetransciption.push("")
-                    }
-                    calls[callIndex] = {...call, realtimetransciption}
-                    return {calls}
+                    // if(data["fromCustomer"] === "true")
+                    // {
+                        let prepend = ""
+                        if(data["fromCustomer"] === "true" && this.lastCustomer === false)
+                        {
+                            this.lastCustomer = true;
+                            prepend = "Customer: "
+                        }
+                        else if(data["fromCustomer"] === "false" && this.lastCustomer === true){
+                            this.lastCustomer = false;
+                            prepend = "Agent: "
+                        }
+                        const callIndex = prevState.calls.findIndex(call => call.contactId === data["contactId"])
+                        let calls = [...prevState.calls]
+                        const call = {...calls[callIndex]}
+                        let realtimetransciption = [...call['realtimetransciption']]
+                        if(prepend !== "")
+                        {
+                            realtimetransciption.push(prepend)
+                            realtimetransciption.push("")
+                        }
+                        if(data["isPartial"] === "true")
+                        {
+                            realtimetransciption.splice(realtimetransciption.length - 1, 1, data['data'])
+                        }
+                        else
+                        {
+                            realtimetransciption.splice(realtimetransciption.length - 1, 1, data['data'])
+                            realtimetransciption.push("")
+                        }
+                        calls[callIndex] = {...call, realtimetransciption}
+                        return {calls}
+                    // }
+                    // else if(data["fromCustomer"] === "false")
+                    // {
+                    //     const callIndex = prevState.calls.findIndex(call => call.contactId === data["contactId"])
+                    //     let calls = [...prevState.calls]
+                    //     const call = {...calls[callIndex]}
+                    //     let agent = [...call['agent']]
+                    //     if(data["isPartial"] === "true")
+                    //     {
+                    //         agent.splice(agent.length - 1, 1, data['data'])
+                    //     }
+                    //     else
+                    //     {
+                    //         agent.splice(agent.length - 1, 1, data['data'])
+                    //         agent.push("")
+                    //     }
+                    //     calls[callIndex] = {...call, agent}
+                    //     return {calls}
+                    // }
                     
                 })   
             }
             else if(data["type"] === "confirm")
             {
                 this.setState(prevState => {
-                    const callIndex = prevState.calls.findIndex(call => call.phoneNumber === data["phoneNumber"])
+                    // let ph = data["phoneNumber"]
+                    // ph = "+" + ph.slice(-12)
+                    const callIndex = prevState.calls.findIndex(call => call.contactId === data["contactId"])
                     const calls = [...prevState.calls]
                     const call = {...calls[callIndex]}
                     
@@ -92,7 +132,7 @@ class Main extends React.Component {
             else if(data["type"] === "notify")
             {
                 this.setState(prevState => {
-                    const callIndex = prevState.calls.findIndex(call => call.phoneNumber === data["phoneNumber"])
+                    const callIndex = prevState.calls.findIndex(call => call.contactId === data["contactId"])
                     const calls = [...prevState.calls]
                     const call = {...calls[callIndex]}
                     
@@ -104,7 +144,7 @@ class Main extends React.Component {
             else if(data["type"] === "offer")
             {
                 this.setState(prevState => {
-                    const callIndex = prevState.calls.findIndex(call => call.phoneNumber === data["phoneNumber"])
+                    const callIndex = prevState.calls.findIndex(call => call.contactId === data["contactId"])
                     const calls = [...prevState.calls]
                     const call = {...calls[callIndex]}
                     
@@ -116,7 +156,7 @@ class Main extends React.Component {
             else if(data["type"] === "voicemailstart")
             {
                 this.setState(prevState => {
-                    const callIndex = prevState.calls.findIndex(call => call.phoneNumber === data["phoneNumber"])
+                    const callIndex = prevState.calls.findIndex(call => call.contactId === data["contactId"])
                     const calls = [...prevState.calls]
                     const call = {...calls[callIndex]}
                     
@@ -129,7 +169,7 @@ class Main extends React.Component {
             {
                 //console.log(data['data'])
                 this.setState(prevState => {
-                    const callIndex = prevState.calls.findIndex(call => call.phoneNumber === data["phoneNumber"])
+                    const callIndex = prevState.calls.findIndex(call => call.contactId === data["contactId"])
                     const calls = [...prevState.calls]
                     const call = {...calls[callIndex]}
                     
@@ -141,7 +181,7 @@ class Main extends React.Component {
             else if(data["type"] === "transcribestart")
             {
                 this.setState(prevState => {
-                    const callIndex = prevState.calls.findIndex(call => call.phoneNumber === data["phoneNumber"])
+                    const callIndex = prevState.calls.findIndex(call => call.contactId === data["contactId"])
                     const calls = [...prevState.calls]
                     const call = {...calls[callIndex]}
                     
@@ -154,7 +194,7 @@ class Main extends React.Component {
             {
                 console.log(data['data'])
                 this.setState(prevState => {
-                    const callIndex = prevState.calls.findIndex(call => call.phoneNumber === data["phoneNumber"])
+                    const callIndex = prevState.calls.findIndex(call => call.contactId === data["contactId"])
                     const calls = [...prevState.calls]
                     const call = {...calls[callIndex]}
                     
@@ -166,7 +206,7 @@ class Main extends React.Component {
             else if(data["type"] === "comprehendstart")
             {
                 this.setState(prevState => {
-                    const callIndex = prevState.calls.findIndex(call => call.phoneNumber === data["phoneNumber"])
+                    const callIndex = prevState.calls.findIndex(call => call.contactId === data["contactId"])
                     const calls = [...prevState.calls]
                     const call = {...calls[callIndex]}
                     
@@ -179,7 +219,7 @@ class Main extends React.Component {
             {
                 console.log(data['data'])
                 this.setState(prevState => {
-                    const callIndex = prevState.calls.findIndex(call => call.phoneNumber === data["phoneNumber"])
+                    const callIndex = prevState.calls.findIndex(call => call.contactId === data["contactId"])
                     const calls = [...prevState.calls]
                     const call = {...calls[callIndex]}
                     
@@ -191,7 +231,7 @@ class Main extends React.Component {
             else if(data["type"] === "calldisconnected")
             {
                 this.setState(prevState => {
-                    const callIndex = prevState.calls.findIndex(call => call.phoneNumber === data["phoneNumber"])
+                    const callIndex = prevState.calls.findIndex(call => call.contactId === data["contactId"])
                     const calls = [...prevState.calls]
                     const call = {...calls[callIndex]}
                     
@@ -231,7 +271,7 @@ class Main extends React.Component {
 
     check = () => {
         const { ws } = this.state;
-        if (!ws || ws.readyState == WebSocket.CLOSED) this.connect(); //check if websocket instance is closed, if so call `connect` function.
+        if (!ws || ws.readyState === WebSocket.CLOSED) this.connect(); //check if websocket instance is closed, if so call `connect` function.
     };
 
     componentDidMount() {
@@ -250,12 +290,28 @@ class Main extends React.Component {
     render(){
         let data = this.state.calls.map(item => {
             //console.log(item)
-            let text = ""
-            item.realtimetransciption.map(x => {
-                text = text + " " + x;
+            //let text = ""
+            let text = []
+            // let text = ""
+            item.realtimetransciption.map((x, index) => {
+                // text = {text + " " + x };
+                if(x === "Customer: ")
+                {
+                    text.push(<span key={index} style={{color: "green"}}><br></br><b>{x}</b><br></br></span>)
+                }
+                else if(x === "Agent: ")
+                {
+                    text.push(<span key={index} style={{color: "red"}}><br></br><b>{x}</b><br></br></span>)
+                }
+                else
+                    text.push(<span key={index}><b>{x}</b></span>)
             });
+            // let text2 = ""
+            // item.agent.map(x => {
+            //     text2 = text2 + " " + x;
+            // });
             //console.log("texT" + text)
-            return <TableData key={item["phoneNumber"]} callsconnected={item["phoneNumber"]} realtimetransciption={text} voicemail={item["voicemail"]} transciption={item["transciption"]} comprehend={item["comprehend"]} notif={item["notif"]} offer={item["offer"]} confirm={item["confirm"]} calldisconnected={item["disconnected"]}></TableData>
+            return <TableData key={item["contactId"]} callsconnected={item["phoneNumber"]} realtimetransciption={text} voicemail={item["voicemail"]} transciption={item["transciption"]} comprehend={item["comprehend"]} notif={item["notif"]} offer={item["offer"]} confirm={item["confirm"]} calldisconnected={item["disconnected"]}></TableData>
         })
        // console.log(data)
         return <div>{data}</div>;

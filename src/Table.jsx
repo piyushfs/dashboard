@@ -4,7 +4,7 @@ import React from 'react';
 class TableData extends React.Component {
 
     render(){
-        console.log("props")
+        //console.log("props")
         console.log(this.props)
         let confirm = ""
         if(this.props.confirm === true)
@@ -53,31 +53,35 @@ class TableData extends React.Component {
         {
             voicemail = <i class="fa fa-check-circle fa-2x" aria-hidden="true"></i>
         }
-        let realtimetransciption = ""
-        realtimetransciption = <h4>{this.props.realtimetransciption}</h4>
+        // let realtimetransciption = ""
+        // realtimetransciption = {}
         let callsconnected = ""
         callsconnected = <h4>{this.props.callsconnected}</h4>
+        // let agent = ""
+        // agent = <h4>{this.props.agent}</h4>
 
         return <div class="container-fluid">
-        <h2>Dashboard</h2>          
+                  
         <table class="table table-bordered">
           <thead>
             <tr>
-              <th style={{width: "10%"}}>Number</th>
-              <th style={{width: "40%"}}>Real-time transcript</th>
-              <th style={{width: "5%"}}>Voicemail</th>
+              <th style={{width: "5%"}}>Number</th>
+              {/* <th style={{width: "35%"}}>Agent</th> */}
+              <th style={{width: "60%"}}>Real-time transcript</th>
+              <th style={{width: "2%"}}>Voicemail</th>
               <th style={{width: "12.5%"}}>Transciption of voicemail</th>
               <th style={{width: "12.5%"}}>Comprehend output</th>
-              <th style={{width: '5%'}}>Notification email</th>
-              <th style={{width: "5%"}}>Offer email</th>
-              <th style={{width: "5%"}}>Confirmation email</th>
-              <th style={{width: "5%"}}>Call Disconnected</th>
+              <th style={{width: '2%'}}>Notification email</th>
+              <th style={{width: "2%"}}>Offer email</th>
+              <th style={{width: "2%"}}>Confirmation email</th>
+              <th style={{width: "2%"}}>Call Disconnected</th>
             </tr>
           </thead>
           <tbody>
               <tr>
                 <td>{callsconnected}</td>
-                <td>{realtimetransciption}</td>
+                {/* <td>{agent}</td> */}
+                <td>{this.props.realtimetransciption}</td>
                 <td>{voicemail}</td>
                 <td>{transciption}</td>
                 <td>{comprehend}</td>
