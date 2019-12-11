@@ -31,10 +31,11 @@ class Main extends React.Component {
 
         ws.onmessage = evt => {
             var data = JSON.parse(evt.data)
+            console.log(data["type"])
             console.log(data)
             if(data["type"] === "callconnected")
             {
-                console.log(data['data'])
+               // console.log(data['data'])
                 this.setState(prevState => {
                     let calls = [...prevState.calls]
                     calls = [
@@ -59,7 +60,7 @@ class Main extends React.Component {
             }
             else if(data["type"] === "chat")
             {
-                console.log(data['data'])
+                //console.log(data['data'])
                 this.setState(prevState => {
                     // if(data["fromCustomer"] === "true")
                     // {
@@ -192,7 +193,7 @@ class Main extends React.Component {
             }
             else if(data["type"] === "transcribefinish")
             {
-                console.log(data['data'])
+               // console.log(data['data'])
                 this.setState(prevState => {
                     const callIndex = prevState.calls.findIndex(call => call.contactId === data["contactId"])
                     const calls = [...prevState.calls]
@@ -217,7 +218,7 @@ class Main extends React.Component {
             }
             else if(data["type"] === "comprehendfinish")
             {
-                console.log(data['data'])
+                //console.log(data['data'])
                 this.setState(prevState => {
                     const callIndex = prevState.calls.findIndex(call => call.contactId === data["contactId"])
                     const calls = [...prevState.calls]

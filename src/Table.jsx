@@ -5,7 +5,7 @@ class TableData extends React.Component {
 
     render(){
         //console.log("props")
-        console.log(this.props)
+        //console.log(this.props)
         let confirm = ""
         if(this.props.confirm === true)
         {
