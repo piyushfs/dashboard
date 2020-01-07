@@ -1,6 +1,7 @@
 import React from 'react';
 //import WebSocket from 'ws';
 import TableData from './Table';
+import './Style.css';
  
 class Main extends React.Component {
 
@@ -13,7 +14,7 @@ class Main extends React.Component {
     lastCustomer = true;
     timeout = 2500;
     connect = () => {
-        var ws = new WebSocket("wss://juhbg8r319.execute-api.us-west-2.amazonaws.com/TEST");
+        var ws = new WebSocket("wss://bu4k83dw67.execute-api.eu-west-2.amazonaws.com/TEST");
         let that = this; // cache the this
         var connectInterval;
 
@@ -85,10 +86,26 @@ class Main extends React.Component {
                         }
                         if(data["isPartial"] === "true")
                         {
+                            // if(data["fromCustomer"] === "false")
+                            // {
+                            //     realtimetransciption.splice(realtimetransciption.length - 1, 1, <div key= {realtimetransciption.length - 1} style={{backgroundColor:"#82ccdd", padding:"10px", borderRadius:"25px", maxWidth:"50%", whiteSpace:"normal",float:"left"}}>{data['data']}</div>)
+                            // }
+                            // else if(data["fromCustomer"] === "true")
+                            // {
+                            //     realtimetransciption.splice(realtimetransciption.length - 1, 1, <div  key= {realtimetransciption.length - 1} style={{backgroundColor:"#78e08f", padding:"10px", borderRadius:"25px", maxWidth:"50%", whiteSpace:"normal",float:"right"}}>{data['data']}</div>)
+                            // }
                             realtimetransciption.splice(realtimetransciption.length - 1, 1, data['data'])
                         }
                         else
                         {
+                            // if(data["fromCustomer"] === "false")
+                            // {
+                            //     realtimetransciption.splice(realtimetransciption.length - 1, 1, <div  key= {realtimetransciption.length - 1} style={{backgroundColor:"#82ccdd", padding:"10px", borderRadius:"25px", maxWidth:"50%", whiteSpace:"normal",float:"left"}}>{data['data']}</div>)
+                            // }
+                            // else if(data["fromCustomer"] === "true")
+                            // {
+                            //     realtimetransciption.splice(realtimetransciption.length - 1, 1, <div  key= {realtimetransciption.length - 1} style={{backgroundColor:"#78e08f", padding:"10px", borderRadius:"25px", maxWidth:"50%", whiteSpace:"normal",float:"right"}}>{data['data']}</div>)
+                            // }
                             realtimetransciption.splice(realtimetransciption.length - 1, 1, data['data'])
                             realtimetransciption.push("")
                         }
@@ -294,28 +311,75 @@ class Main extends React.Component {
             //let text = ""
             let text = []
             // let text = ""
+            let customer;
+            let agentdata = "", custdata = ""
             item.realtimetransciption.map((x, index) => {
                 // text = {text + " " + x };
                 if(x === "Customer: ")
                 {
-                    text.push(<span key={index} style={{color: "green"}}><br></br><b>{x}</b><br></br></span>)
+                    customer = true;
+                    agentdata = ""
+                    custdata = ""
+                    text.push("")
+                    //text.push(<span key={index} style={{color: "green"}}><br></br><b>{x}</b><br></br></span>)
                 }
                 else if(x === "Agent: ")
                 {
-                    text.push(<span key={index} style={{color: "red"}}><br></br><b>{x}</b><br></br></span>)
+                    customer = false;
+                    agentdata = ""
+                    custdata = ""
+                    text.push("")
+                    //text.push(<span key={index} style={{color: "red"}}><br></br><b>{x}</b><br></br></span>)
                 }
                 else
-                    text.push(<span key={index}><b>{x}</b></span>)
+                {
+                    if(customer === true)
+                    {
+                        custdata = custdata + " " + x;
+                        text.splice(text.length - 1, 1, <div key= {index} className="msg_cotainer_lex">{custdata}</div>)
+                        //text.push(<span key={index}><b>{x}</b></span>)
+                    }
+                    else if(customer == false)
+                    {
+                        agentdata = agentdata + " " + x;
+                        text.splice(text.length - 1, 1, <div key= {index} className="msg_cotainer_user">{agentdata}</div>)
+                        // text.push(<span key={index}><b>{x}</b></span>)
+                    }
+                }
+                    // text.push(<span key={index}><b>{x}</b></span>)
             });
             // let text2 = ""
             // item.agent.map(x => {
             //     text2 = text2 + " " + x;
             // });
-            //console.log("texT" + text)
-            return <TableData key={item["contactId"]} callsconnected={item["phoneNumber"]} realtimetransciption={text} voicemail={item["voicemail"]} transciption={item["transciption"]} comprehend={item["comprehend"]} notif={item["notif"]} offer={item["offer"]} confirm={item["confirm"]} calldisconnected={item["disconnected"]}></TableData>
-        })
+            // console.log("texT" + text)
+             return <TableData key={item["contactId"]} callsconnected={item["phoneNumber"]} realtimetransciption={text} voicemail={item["voicemail"]} transciption={item["transciption"]} comprehend={item["comprehend"]} notif={item["notif"]} offer={item["offer"]} confirm={item["confirm"]} calldisconnected={item["disconnected"]}></TableData>
+            })
        // console.log(data)
-        return <div>{data}</div>;
+        return (
+            <div class="container-fluid">
+                  
+                    <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                        <th style={{width: "5%", verticalAlign: "middle", textAlign: "center"}}>Number</th>
+                        {/* <th style={{width: "35%"}}>Agent</th> */}
+                        <th style={{width: "60%", verticalAlign: "middle", textAlign: "center"}}>Real-time transcript</th>
+                        <th style={{width: "2%", verticalAlign: "middle", textAlign: "center"}}>Voicemail</th>
+                        <th style={{width: "12.5%", verticalAlign: "middle", textAlign: "center"}}>Transciption of voicemail</th>
+                        <th style={{width: "12.5%", verticalAlign: "middle", textAlign: "center"}}>Comprehend output</th>
+                        <th style={{width: '2%', verticalAlign: "middle", textAlign: "center"}}>Notification email</th>
+                        <th style={{width: "2%", verticalAlign: "middle", textAlign: "center"}}>Offer email</th>
+                        <th style={{width: "2%", verticalAlign: "middle", textAlign: "center"}}>Confirmation email</th>
+                        <th style={{width: "2%", verticalAlign: "middle", textAlign: "center"}}>Call Disconnected</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {data}
+                    </tbody>
+                    </table>
+                </div>
+        );
         // var transcript = this.state.dataFromServer.map((itemName, i) => 
         //     <h2 key={i}>{itemName}</h2>
         // )
@@ -331,3 +395,4 @@ class Main extends React.Component {
     }
 }
 export default Main;
+

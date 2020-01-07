@@ -60,24 +60,7 @@ class TableData extends React.Component {
         // let agent = ""
         // agent = <h4>{this.props.agent}</h4>
 
-        return <div class="container-fluid">
-                  
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th style={{width: "5%"}}>Number</th>
-              {/* <th style={{width: "35%"}}>Agent</th> */}
-              <th style={{width: "60%"}}>Real-time transcript</th>
-              <th style={{width: "2%"}}>Voicemail</th>
-              <th style={{width: "12.5%"}}>Transciption of voicemail</th>
-              <th style={{width: "12.5%"}}>Comprehend output</th>
-              <th style={{width: '2%'}}>Notification email</th>
-              <th style={{width: "2%"}}>Offer email</th>
-              <th style={{width: "2%"}}>Confirmation email</th>
-              <th style={{width: "2%"}}>Call Disconnected</th>
-            </tr>
-          </thead>
-          <tbody>
+        return (
               <tr>
                 <td>{callsconnected}</td>
                 {/* <td>{agent}</td> */}
@@ -90,10 +73,7 @@ class TableData extends React.Component {
                 <td>{confirm}</td>
                 <td>{calldisconnected}</td>
               </tr>
-          </tbody>
-        </table>
-      </div>;      
-
+               );
     }
 }
 

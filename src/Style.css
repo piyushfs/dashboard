@@ -1,0 +1,32 @@
+.msg_cotainer_user {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 10px;
+    border-radius: 25px;
+    min-width: 50%;
+    /* color: white; */
+    max-width: 85%;
+    background-color: #82ccdd;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    float: left;
+    font-size: medium;
+}
+.msg_cotainer_lex {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-right: 10px;
+    border-radius: 25px;
+    min-width: 50%;
+    max-width: 85%;
+    /* color: #5A7FB9; */
+    background-color: #78e08f;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    float: right;
+    font-size: medium;
+}
