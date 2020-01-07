@@ -14,7 +14,7 @@ class Main extends React.Component {
     lastCustomer = true;
     timeout = 2500;
     connect = () => {
-        var ws = new WebSocket("wss://bu4k83dw67.execute-api.eu-west-2.amazonaws.com/TEST");
+        var ws = new WebSocket("wss://juhbg8r319.execute-api.us-west-2.amazonaws.com/TEST");
         let that = this; // cache the this
         var connectInterval;
 
